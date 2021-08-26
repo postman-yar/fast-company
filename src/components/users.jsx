@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import api from "../api"
+import SearchStatus from './searchStatus';
+import User from './user';
 
 
 const Usrs = () => {
@@ -9,20 +11,10 @@ const Usrs = () => {
         setUsers(users.filter((user => user._id !== id)))
     };
 
-    const getLabel = (count) => {
-        const lastOne = Number(count.toString().slice(-1))
-        if (count >= 5 && count <= 14)
-            return 'человек тусанет'
-        if ([2, 3, 4].indexOf(lastOne) >= 0)
-            return 'человека тусанут'
-        return 'человек тусанет'
-    }
 
     return (
         <React.Fragment>
-            <span className={"badge bg-" + (users.length > 0 ? "primary" : "danger")}>
-                {users.length > 0 ? `${users.length} ${getLabel(users.length)} тусанет с тобой сегодня` : 'никто не тусанет с тобой сегодня'}
-            </span>
+            <SearchStatus usersLength={users.length}/>
             {users.length > 0 &&
                 <table className="table">
                     <thead>
@@ -32,23 +24,17 @@ const Usrs = () => {
                             <th scope="col">Профессия</th>
                             <th scope="col">Встретился, раз</th>
                             <th scope="col">Оценка</th>
+                            <th scope="col">Избранное</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user) =>
-                            <tr key={user._id}>
-                                <th>{user.name}</th>
-                                <td>{user.qualities.map((item) => <span className={"badge m-1 bg-" + item.color} key={item._id}>{item.name}</span>)}</td>
-                                <td>{user.profession.name}</td>
-                                <td>{user.completedMeetings}</td>
-                                <td>{user.rate}/5</td>
-                                <td><button onClick={() => handleDelete(user._id)}
-                                    style={{ fontSize: "30px", fontWeight: "bold" }}
-                                    className="btn btn-danger btn-sm m-2">
-                                    delete
-                                </button></td>
-                            </tr>
+                            <User 
+                            key = {user._id}
+                            user={user}
+                            onDelete={handleDelete}
+                            />
                         )}
                     </tbody>
                 </table>
